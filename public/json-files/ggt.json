@@ -1,0 +1,37 @@
+[
+  [
+    {
+      "line": "101",
+      "destination": "San Rafael",
+      "arrival_time": [
+        15,
+        46
+      ]
+    },
+    {
+      "line": "120",
+      "destination": "Strawberry",
+      "arrival_time": [
+        45
+      ]
+    }
+  ],
+  [
+    {
+      "line": "101",
+      "destination": "San Francisco Salesforce TC",
+      "arrival_time": [
+        24,
+        52
+      ]
+    },
+    {
+      "line": "120",
+      "destination": "San Francisco Salesforce TC",
+      "arrival_time": [
+        44,
+        103
+      ]
+    }
+  ]
+]

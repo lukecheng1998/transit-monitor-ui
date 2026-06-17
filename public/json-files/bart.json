@@ -1,0 +1,70 @@
+[
+  [
+    {
+      "line": "Blue-S",
+      "destination": "SF / Daly City",
+      "arrival_time": [
+        0,
+        20
+      ]
+    },
+    {
+      "line": "Yellow-S",
+      "destination": "San Francisco International Airport",
+      "arrival_time": [
+        3,
+        15
+      ]
+    },
+    {
+      "line": "Red-S",
+      "destination": "SFO Airport / Millbrae",
+      "arrival_time": [
+        10,
+        30
+      ]
+    },
+    {
+      "line": "Green-S",
+      "destination": "SF / Daly City",
+      "arrival_time": [
+        13,
+        33
+      ]
+    }
+  ],
+  [
+    {
+      "line": "Red-N",
+      "destination": "Richmond",
+      "arrival_time": [
+        1,
+        21
+      ]
+    },
+    {
+      "line": "Yellow-N",
+      "destination": "Pittsburg / Bay Point",
+      "arrival_time": [
+        4,
+        13
+      ]
+    },
+    {
+      "line": "Green-N",
+      "destination": "Berryessa/North San Jose",
+      "arrival_time": [
+        6,
+        26
+      ]
+    },
+    {
+      "line": "Blue-N",
+      "destination": "Dublin/Pleasanton",
+      "arrival_time": [
+        17,
+        37
+      ]
+    }
+  ]
+]
