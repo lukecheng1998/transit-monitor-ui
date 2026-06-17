@@ -6,4 +6,13 @@ export interface TransitLine {
     arrival_time?: number[]
     departure_time?: number[]
 }
-export type TransitData = TransitLine[][];
+export interface GroupedRoute {
+    routeId: string
+    routeName: string
+    directions: {
+        destination: string
+        times: number[]
+        isDeparture: boolean
+    }[];
+}
+export type AgencyData = TransitLine[][];
