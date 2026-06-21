@@ -5,6 +5,35 @@ import { Agency, AgencyData, GroupedRoute, TransitLine } from './assets/types';
 const S3_BUCKET_URL = 'https://your-bucket-name.s3.amazonaws.com/'; // TODO: Fill in with actual S3 bucket URL
 const REFRESH_INTERVAL = 60000; // 1 minute in milliseconds
 const IS_LOCAL = process.env.NODE_ENV === 'development'; // Toggle based on 
+const AGENCY_STYLES: Record<Agency, { activeBtn: string; headerBg: string; accentBg: string  }> = {
+  Muni: { 
+    activeBtn: 'bg-red-600 text-white shadow-sm', 
+    headerBg: 'bg-red-600',
+    accentBg: 'bg-red-700'
+  },
+  BART: { 
+    activeBtn: 'bg-blue-600 text-white shadow-sm', 
+    headerBg: 'bg-slate-800', // Default dark header; lines inside will have colored badges
+    accentBg: 'bg-blue-600'
+  },
+  Caltrain: { 
+    activeBtn: 'bg-red-700 text-white shadow-sm', 
+    headerBg: 'bg-red-700',
+    accentBg: 'bg-gray-900'
+  },
+  GGT: { 
+    activeBtn: 'bg-teal-600 text-white shadow-sm', 
+    headerBg: 'bg-teal-600',
+    accentBg: 'bg-teal-700'
+  }
+};
+const BART_COLOR_MAP: Record<string, string> = {
+  Red: 'bg-red-600',
+  Orange: 'bg-orange-500',
+  Yellow: 'bg-yellow-500 text-black', // Add black text contrast for yellow!
+  Green: 'bg-green-600',
+  Blue: 'bg-blue-600'
+};
 export default function TransitMonitor() {
     //Array of arrivals
   const [activeAgency, setActiveAgency] = useState<Agency>('Muni');
@@ -51,12 +80,17 @@ export default function TransitMonitor() {
       if (activeAgency === 'BART') {
         routeName = `${routeId.replace('LINE ', '')} Line`;
       }
+      let badgeColor = AGENCY_STYLES[activeAgency].accentBg; // Default badge color
+      if(activeAgency === 'BART' && BART_COLOR_MAP[routeId]){
+        badgeColor = BART_COLOR_MAP[routeId];
+      }
       const times = item.arrival_time || item.departure_time || [];
       const isDeparture = !!item.departure_time;
       if (!groups[routeId]) {
         groups[routeId] = {
           routeId,
           routeName,
+          badgeColor,
           directions: [],
         };
       }
@@ -69,6 +103,7 @@ export default function TransitMonitor() {
     return Object.values(groups);
   }
   const groupedRoutes = getGroupedRoutes();
+  const currentStyles = AGENCY_STYLES[activeAgency];
 
       return (
     <div className="p-6 max-w-2xl mx-auto min-h-screen bg-gray-50 text-gray-900">
@@ -85,9 +120,9 @@ export default function TransitMonitor() {
           <button
             key={agency}
             onClick={() => setActiveAgency(agency)}
-            className={`px-4 py-2 font-semibold text-sm rounded-md transition-colors ${
+            className={`px-4 py-2 font-semibold text-sm rounded-md transition-all ${
               activeAgency === agency 
-                ? 'bg-blue-600 text-white shadow-sm' 
+                ? AGENCY_STYLES[agency].activeBtn 
                 : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -96,30 +131,31 @@ export default function TransitMonitor() {
         ))}
       </nav>
 
-      {/* Grouped Cards Main Main */}
+      {/* Grouped Transit Display */}
       <main className="space-y-6">
         {groupedRoutes.length === 0 ? (
           <p className="text-center text-gray-500 py-8">No live route schedules found for this station.</p>
         ) : (
           groupedRoutes.map((route) => (
             <div key={route.routeId} className="border border-gray-200 rounded-xl shadow-sm bg-white overflow-hidden">
-              {/* Card Header: Consolidated Line Identifier */}
-              <div className="bg-gray-900 text-white px-5 py-3 flex justify-between items-center">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xl font-black bg-blue-600 text-white px-2.5 py-0.5 rounded shadow-sm">
+              {/* Card Header: Uses dynamic agency configurations */}
+              <div className={`${currentStyles.headerBg} text-white px-5 py-3 flex justify-between items-center transition-colors duration-300`}>
+                <div className="flex items-baseline gap-3">
+                  {/* Route ID Pill gets its custom unique line color configuration */}
+                  <span className={`text-lg font-black px-3 py-0.5 rounded shadow-xs uppercase tracking-wider ${route.badgeColor}`}>
                     {route.routeId}
                   </span>
                   <span className="text-md font-bold tracking-wide text-gray-100 uppercase">
                     {route.routeName}
                   </span>
                 </div>
-                <span className="text-xs font-mono text-gray-400">ROUTE ID: {route.routeId}</span>
+                <span className="text-xs font-mono text-white/60">ROUTE: {route.routeId}</span>
               </div>
               
-              {/* Card Body: Map over each unique direction block */}
+              {/* Card Body */}
               <div className="divide-y divide-gray-100">
                 {route.directions.map((dir, dIdx) => (
-                  <div key={dIdx} className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div key={dIdx} className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-gray-50/50 transition-colors">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-semibold uppercase tracking-wider bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
                         To
@@ -129,7 +165,7 @@ export default function TransitMonitor() {
                       </span>
                     </div>
                     
-                    {/* Arrival Times Row */}
+                    {/* Arrival Times */}
                     <div className="flex gap-2 items-center flex-wrap">
                       {dir.times.length === 0 ? (
                         <span className="text-sm text-gray-400 italic">No scheduled times</span>

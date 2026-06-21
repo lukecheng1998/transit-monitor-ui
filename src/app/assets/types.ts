@@ -9,6 +9,7 @@ export interface TransitLine {
 export interface GroupedRoute {
     routeId: string
     routeName: string
+    badgeColor: string
     directions: {
         destination: string
         times: number[]
